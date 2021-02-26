@@ -1,0 +1,706 @@
+﻿1.html/css
+  1)盒模型：普通盒模型(w3c盒模型)+怪异盒模型(IE盒模型)
+
+		标准盒模型的conten(内容)就是实际的宽度(width)
+		IE盒模型的conten是width+border+padding
+  2)浮动:原理
+		 影响
+			1:导致父级的高度塌陷
+			2:导致元素脱离文档流
+		 清浮动几种方法
+			1:在其父级元素内添加一个空标签,设置属性clear:both;缺点:增加无意义的空标签
+			2:在其父级元素设置overflow:hidden属性;缺点:内部宽高超过父级div时,会出现滚动条,有一定兼容性
+			3:在其父级元素设置伪类afert或者before清除浮动;大致都在用这种方法
+  
+  3)定位：三种定位区别
+		
+		1:position:relative 形成相对定位元素;使其元素不会脱离文档流,定位依据本身位置定位
+		2:position:absolute 形成绝对定位元素;使其元素脱离文档流,定位依据拥有定位的父级元素进行定位,若父级元素没有设置定位,则以body为准
+		3:position:fixed 形成固定定位元素;使其元素脱离文档流,定位依据于浏览器窗口进行固定定位
+  
+  4）元素居中：不定宽高
+		
+		1:利用position:absolute绝对定位,将top和left分别设置为50%,然后设置CSS3的新特性transform:translate的x轴和y轴为-50%
+		2:利用新特性弹性布局flex,设置justify-content:center; //水平居中  align-items:center; //垂直居中
+		3:利用float和margin实现水平居中
+
+  5）两列布局/三列布局
+
+		1:两列布局:左边元素定宽高,右边元素自适应;
+			方法1:左边元素设置position:absolute属性;固定宽高;使其定位在左边,右边元素设置margin-left来实现两列布局
+			方法2:左边元素设置float:left属性,使其移动到左边,右边元素设置overflow:auto属性来实现两列布局
+		2:三列布局:左右两边固定,中间自适应
+  			方法1:左右两边元素设置position:absolute属性,分别定位在左边和右边;固定宽度,中间元素设置margin-lfet和margin-right来实现三列布局
+			方法2:左右两边元素设置float:left和right属性,分别定位在左边和右边,固定宽度,中间元素设置overfl:auto和margin来实现三列布局
+
+  6）CSS的选择器的优先级：
+
+	标签选择器(1) --> 类选择器(10) --> id选择器(100) --> 通配符 --> 行内样式(1000) --> !important --> js
+  
+  7）如何让元素成为可以设置宽高
+		
+	1:修改display属性为inline-block或者为block
+	2:设置浮动float
+	3:设置绝对定位,或者固定定位
+ 
+2.JS
+	1）变量、声明函数的预解析
+		
+		在js解析代码过程中,用var声明的变量或者函数声明都会被预解析到最顶层,从而形成了变量的提升,函数声明提升
+			而函数是比变量的地位高一级的,所以函数声明的提升是整体的提升,而变量提升,只提升声明,不赋值,所以函数的表达式不会被预解析
+	
+	2）数据类型：number\string/boolean/null/undefined/object/symbol
+	   隐士类型转换
+				6||5&&[]?9:0
+
+			或运算符遇到真即输出真,不会再运行下去
+			与运算符遇到假即输出假,不会再运行下去,除非两者都为真,才会输出后面一位
+		
+	3）闭包
+	
+		当外部一个函数嵌套着内部一个函数,而内部函数可以访问到外部函数及以外的变量,并且保存其访问的值,从而形成的闭包
+			闭包好处可以设计自己私有的方法和变量,避免变量的全局污染
+			闭包的缺点因为闭包内部的变量常驻内存,没有删除,从而会导致内存泄漏
+
+	3).1 作用域和作用域链
+		作用域:js中作用域分为全局作用域和局部作用域,全局作用域是整体可以访问的,而局部作用域是无法直接访问其内部的变量
+		作用域链:保证执行环境(类似函数)中有权访问的变量和函数是有序的,作用域链只能向上访问,直到访问到window对象上终止;而作用域链向下访问是不被允许的
+	    
+	4）原型、原型链 
+
+		每一个函数都一个属性，prototype,在该函数的prototype上定义的属性或方法，
+		都可以被由该函数new的对象访问，则称该函数的.prototype为由该函数创建出来的一类对象的原型
+		
+		每一个对象都一个属性:__proto__,这个__proto__属性的值是该对象的原型
+		一个对象在访问某个属性，在自身对象上找不到，则通过__proto__属性找到其原型对象
+		如果原型对象也找不到，则沿着原型对象的__proto__找到上一级，以此类推，直到null
+
+	4).1 创建对象的几种方式
+		1:无参数函数模拟构造函数
+			function Person(){}
+		2:工厂模式创建对象
+			var p=new Person();
+		3.对象字面量方式
+			let obj = {}
+		4.带参数的构造函数
+			function Persom(...arugment){}
+		
+		p.__proto__===Person.prototype;
+		
+		Person.prototype.__proto__===Object.prototype;
+		
+		Person.__proto__===Function.prototype;
+		Function.__proto__===Function.prototype;
+		Function.prototype.__proto__===Object.prototype;
+	
+	5）继承:
+	原型继承:
+		function Person(name,age){
+			this.name = name ;
+			this.age = age
+		}
+		Person.prototype.show = function(){
+				....
+		}
+		function P(name,age){
+			this.name = name;
+			this.age = age
+		}
+		P.prototype = new Person()
+		P.prototype.add = function(){
+				....
+		}
+	call和apply的继承
+		function Person(name,age){
+			this.name = name ;
+			this.age = age
+		}
+		Person.prototype.show = function(){
+				....
+		}
+		function P(name,age){
+			Person.call(this(P),name,age)
+			Person.apply(this,[name,age])
+		}
+		P.prototype.show = function(){
+				....
+		}
+	原型和call,apply的混合继承
+		function Person(name,age){
+			this.name = name ;
+			this.age = age
+		}
+		Person.prototype.show = function(){
+				....
+		}
+		function P(name,age){
+			Person.call(this(P),name,age)
+			Person.apply(this,[name,age])
+		}
+		P.prototype = new Person()
+		P.prototype.add = function(){
+				....
+		}
+	5).1 call和apply的区别
+		
+		它们的作用都是使其对象引用另一个对象上的某个方法或属性;将其改变this指针的方向
+		它们的区别就是所带的参数形式不同,call可以带无数个参数,apply只能带两个,第二个经常以数组的形式出现
+	
+	6）正则表达式
+		邮箱、手机号码
+
+		邮箱:^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$
+		手机号码:^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\\d{8}$
+	
+	7）数组操作、字符串操作
+		数组去重：var set=new Set(arr); var arr=Array.from(set);
+			
+			function Set(arr){
+				let newarr = [];
+				let obj = {};
+				for(let i = 0;i < arr.length; i++){
+					if(!obj[arr[i]]){
+						newarr.push(arr[i]),
+						obj[arr[i]] = 1
+					}
+				}
+				return newarr
+			}
+		
+		数组排序：sort,冒泡排序
+
+			冒泡排序法:
+				function Sort(arr){
+					for(let i = 0 ;i < arr.length; i++){
+						for(let j = 1; j< arr.length){
+							if(arr[j] > arr[j+1]){
+								[arr[j],arr[j+1]] = [arr[j+1],arr[j]]
+							}	
+						}
+					}
+					return arr
+				}
+			arr.sort(function(a,b){
+    				return a-b //升序
+				return b-a // 降序
+			}); 
+		
+		字符串操作:
+	
+			chaAt():拿到对应的下角标
+			indexOf():拿到下角标对应的值,没有则返回负一
+			slice() :截取字符串
+			substring() : 截取字符串;
+			replace() : 正则匹配字符串
+			split() :返回一个数组
+		
+	8)this指向
+		
+		1:函数调用;this指向该直接调用者
+		2:new关键字;this指向new出来的那个对象
+		3:事件触发;this指向事件触发源
+
+	8).1 new做了什么事
+
+		创建了一个空对象,并且this变量引用该对象,同时还继承了该函数的原型
+		属性和方法被加入到this引用的对象中
+		新创建的对象由this所引用,并且最后隐式的返回this
+		
+	9）深浅拷贝
+
+		栈和堆:
+			栈是用来存放基本数据类型的;数据大小确定,内存空间大小可以分配
+			堆是用来存放引用数据类型的;数据大小不确定,内存空间大小进行特定分配
+			栈是用来传值,而堆是用来传址;每建立一个引用数据类型;栈都会生成一个指针指向该引用数据类型
+		浅拷贝: 
+			当一个引用类型的数据赋值给另一个引用数据类型,但是他们的最终指针指向同一个父级地址
+				所谓的地址没变;从而形成了浅拷贝
+			let a = {
+				key1 : "1111"
+			}
+			function Copy(p){
+				let c = {}
+				for(let i in p){
+					c[i] = p[i]
+				}
+				return c
+			}
+			Copy(arr)
+
+		深拷贝:往往我们不喜欢它们指向的同个父级地址,从而两者之间的数据不会互相影响;利用递归的形式来实现深拷贝
+			function Copy(p , c){
+				let c = c || {};
+				for(let i in p){
+					if(type p[i] === "object"){
+						c[i] = (p[i].comstrutor === Array) ? [] :{}
+						Copy(p[i],c[i])
+					}else {
+						c[i] = p[i]
+					}
+				}
+				return c
+			}
+		
+	10)ES6新特性
+		let,const
+		箭头函数
+		解构赋值
+		扩展运算符
+		函数的不定参数、默认值
+		Promise
+		class类
+		对象简化
+		模块化语法
+		
+3.Ajax:
+	1)ajax工作原理
+
+		Ajax是一种用于创建快速动态网页的技术,ajax是一种无需重新记载整个网页的情况下,能够更新部分网页的技术
+	优点:
+		1.减轻服务器的负担,按需要取数据,最大程度的减少多余的请求
+		2.局部刷新方面,减少用户心理和实际的等待时间,带来更好的用户体验
+		3.基于XML标准,并被广泛支持,不需要安装插件等,进一步促进页面和数据的分离
+	缺点:
+		1.使用了大量的JavaScript和ajax引擎,考虑一定的兼容性
+		2,只是局部刷新,所以没有前后退按钮
+		3.对移动设备不是太支持
+
+	原理 : 
+		在用户和服务器之间加了一个中间层(ajax引擎),通过XMLHttpRequest对象来向服务器发送异步请求,从服务器获得数据,然后用
+			用JavaScript来操作DOM而更新页面,使用户操作与服务器响应异步化;关键的一步就是从服务器获取请求数据
+		原理过程:
+			let xhr = null;创建异步对象
+			if(window.XMLHttpRequest){
+				xhr = new XMLHttpRequest()
+			}else{
+				xhr = new ActivexObject("Microsofy:XMLHTTP")
+			} 
+			if(type == "GET"){  //判断数据的传输方式
+				xhr.open(type,url+data)  //调用open方法
+				xhr.send(null)  //发送请求
+			}else {
+				xhr.open(type,url)
+				xhr.setRequestHeader("Content-Type":"x-www-form-urlencoded")
+				xhr.send(data)
+			}
+			//接收请求的数据触发onreadystatechange函数,判读其状态值和状态码
+			xhr.onreadystatechange = function(){
+				if(xhr.readyState  === 4){
+					if(xhr.status >= 200 && <300 || ==304){
+						success(xhr.responseText)
+					}else{
+						error(err)
+					}
+				}
+				
+			}
+	
+	2）HTTP协议
+		POST/GET区别
+
+			get:请求后台,获取后台返回的资源
+			post:提交数据给后台,获取或者修改后台数据
+			get请求的过程中会被限制url的长度,传输大小有限制,不能超过2ke
+			post基本上没有这个限制,
+			get每次发送url都会把所传递的参数显示在url后面,导致安全性低
+			post传输的数据安全性较高,不会把参数显示在url后面
+		总结:post和get的安全性是相对的,从数据传输过程来看,post更加安全,但是对服务器数据的操作来看
+			post方式安全性又是比较低,因为会修改后台数据			
+
+		状态码:200,404,304,302,405,403,500
+
+			200:请求成功
+			404:找不着如何与URL相匹配的资源
+			304:自上次请求后,页面没有修改过,缓存
+			302:临时性重定向
+			405:资源被禁止
+			403:禁止访问
+			500:服务器端异常
+
+		请求头设置:Content-Type,  cache-control,expires
+					自定义
+		响应头
+	
+	3）同步、异步的区别
+
+		同步是阻塞模式:
+			同步是指一个进程在执行某个请求的时候,若该请求需要一段时间才能返回信息
+		那么这个进程将会一直等待下去,等到收到返回信息才能继续执行
+		异步是非阻塞模式:
+			异步是指进程不需要一直等下去.而是继续执行下面的操作,不管其他进程的状态
+		当有信息返回时系统会通知经常处理.这样可以提高执行效率
+	4）跨域:
+		什么是跨域
+
+			同源策略:是http的一种约定,是浏览器最核心也是最基本的安全功能,保证用户信息的安全,防止恶意的网站窃取数据
+			同源策略需要同时满足三个要求
+				协议相同
+				域名相同
+				端口相同
+		跨域:由于浏览器同源策略,凡是发送请求的url的协议,域名,端口三者之间任意一个与当前页面
+			的地址不同即为跨域
+
+		跨域怎么解决:
+
+			jsonp：原理
+				通过动态插入一个script标签,浏览器对script的资源引用没有同源限制,同时资源加载到页面后会立即执行
+				只能发送get请求,无法确定是否请求失败
+
+			CORS跨域 :
+				是现在浏览器支持跨域资源请求的一种常见方式
+					一般都是后台人员在处理请求数据的时候,添加允许跨域的相关操作
+
+			服务器代理:用于将请求发送给后台服务器,通过服务器来发送请求,然后将请求的结果传递给前端
+				通过nginx代理
+
+4.HTML5新特性
+	1）新标签 
+	2）vedio,audio音视频
+	3）canvas画布
+	4）本地存储localStorage/sessionStorage
+	5）历史管理
+	6）离线缓存 Application Cache
+	7）webworkers 子线程
+
+	cookie/localStorage/sessionStorage
+
+		共同点:用于浏览器存储的缓存数据
+		不同点:
+			1.存储内容是否发送到服务端;当设置了Cookie后;数据会发送服务端,造成一定的宽度浪费;webStorage,会将数据保存到本地
+			2.数据存储大小不同:Cookie数据不能超过4k不能超过4k,适用于会话标识;web storage数据存储可以达到5M
+			3.数据存储的有效时间不同,Cookie可以自定义的设置过期时间,localstorage存储永久有效,除非手动删除;
+				sessionstorage仅在关闭浏览器之前有效
+			4.作用域不同:Cookie和localStorage是在同源同窗口中都是共享的,sessionStorage不在不同的浏览器窗口中共享,即使是同一个页面
+
+	
+	cookie/storage的区别
+	
+		存储空间storage更大,存储内容不会发送到服务器,更多丰富易用的接口,独立的存储空间
+	
+	storage的存储方法setItem
+		获取方法getItem
+		删除方法clear
+		删除部分removeItem
+	
+5。CSS3的新特性：
+	1）动画、过渡
+	2）新选择器
+	3）弹性盒模型：flex
+	4）新UI特性:圆角、渐变、遮罩....
+	5）媒体查询：media
+	6）新单位：rem,vh,vw等
+	
+移动端viewport 视口设置	
+
+6。jQuery
+	链式操作原理
+	jquery插件封装
+	   通用方法：(function($){ 
+				$.myFn=function(){
+						
+			}))(jQuery)
+		通用DOM操作：
+			(function($){ 
+				$.fn.myFn=function(){
+						
+				}
+			})(jQuery)
+
+7.UI框架
+
+8.Vue
+	1)双向数据绑定:
+		核心是Model层更新view层.通过数据劫持的方式来做双向数据绑定;调用object.defineproperty()方法
+		从而触发get和set来监听触发watch事件,watch触发虚拟DOM的重新reder函数;虚拟DOM触发真实DOM更新
+		达到数据层更新视图层,而视图层更新数据层,通过Vue内部的指令去实现
+
+	2)mvvm和mvc的理解
+		MVVM是一种基于前端开发的架构模式,其核心是提供了view和ViewModel的双向数据绑定,这使得ViewModel的状态改变可以自动传递给view,形成所谓的双向数据绑定
+		MVC主要是通过controller /kən'trəʊla/ 来是实现双向数据绑定,这会产生大量的DOM操作使页面渲染性能降低,加载速度变慢,影响用户体验;
+
+
+	3)组件注册
+
+		组件:可以扩展HTML元素,封装可重用的代码
+		注册:全局注册和局部注册
+	组件跟vue实例的区别:
+		1.没有el属性
+		2.必须设置template
+		3.data必须是函数
+			因为可能在多处调用同一组件，为了不让多处的组件共享同一data对象，只能返回函数。
+	组件注意:
+		1.组件的template必须要有根元素
+		2.组件内的数据和方法能定义在自身的data或methods中,不能定义在父组件中
+		3.标签要闭合
+	
+	4）组件间通信
+		父-->子
+
+			父组件通过设置自定义属性携带需要传递的给子组件的数据,在子组件中通过props对应的属性名获取接收的对应的数据
+			
+		子--》父
+
+			在子组件通过绑定的某个事件,触发事件调用$emit事件发送,从而触发自定义在父组件中的事件函数
+			$emit的第一个参数是绑定在父组件的自定义事件名称;第二个参数是需要传递的数据,多个参数以逗号隔开
+
+		非父子
+	
+			简单数据使用创建Vue实例作用中间事件总线,借助事件总线来实现任意两个组件间的通信
+			使用:
+				发送数据组件触发Vue.$emit发送事件和传递的参数
+				接收数据组件,在mounted中监听Vue.$on事件获取参数
+			当数据复杂时,使用VueX状态管理
+
+	5）动态组件	
+		
+		利用v-bind:is属性来实现动态组件		
+`
+	   组件缓存 keep-alive
+		把切换出去的组件保留在缓存中,可以保留组件的状态或者避免重新渲染 keep-alive也有钩子函数 缓存组件激活时调用activted钩子函数
+	
+	6) 组件生命周期
+
+		生命周期分为三个阶段:挂载阶段,更新阶段,销毁阶段
+		    挂载阶段:
+			1.创建Vue实例
+			2.初始化所有的钩子函数
+			3.调用beforeCreate钩子函数
+			4.数据监听和方法初始化
+			5.回调created钩子函数
+			6.查找模板 : 判断实例上是否有el属性和template模板属性
+			7.编译模板 :调用内部的render函数,生成虚拟的DOM
+			8.将虚拟DOM挂载到真实DOM,挂载前回调beforeMount,挂载后调用Mounted
+		    更新阶段:
+			数据更新,先触发setter调用,setter通知watcher调用,watcher触发虚拟DOM重新渲染.真实DOM更新前会回调beforeUpdate钩子函数
+				真实DOM更新后触发Upadate钩子函数调用
+		     销毁阶段:
+			被动销毁和主动销毁.销毁前会回调beforeDestroy,销毁后会回调destroyed
+				
+	
+	7）异步组件
+
+		随着项目越来越大,网页的性能问题成为了前端解决的主要问题,为了提高网页的性能,增加用户的体验感,可以利用异步组件在实现按需加载
+			component:(resolve,reject) => { resolve(require("路径"))}
+		实现多个小模块,按需从服务器下载
+	
+	8）路由：
+		怎么使用
+			路由的作用是单页面引用;
+			1:在组件模板上创建router渲染入口 <router-view></router-view>
+			2:创建VueRouter路由对象,配置路由
+				new VueRouter({
+					routes:[{配置路由纪录}]
+				})
+			3:把所创建的路由对象注册到当前的vue实例中
+		动态路由
+			当多个页面结构相似,数据不同的情况下,则使用动态路由
+			使用过程:在router配置路由纪录时,使用动态路径参数设置path属性,以冒号开头
+				通过this.$route.params获取动态参数
+		嵌套路由
+			我们在实际应用界面中,通常是有多层嵌套的路由结合而成
+				在某个组件纪录下通过children去定义嵌套路由,数组格式,内部同样写嵌套路由纪录
+		懒加载路由
+			
+			跟异步组件是一样的,提高页面的性能,我们可以把不同路由对应的组件分割成不同的代码块,
+				结合Vue的异步组件和webpack的代码分割功能,实现路由组件的懒加载
+					es6写法:() => import("路径")
+					resolve /riso/=> require.ensure/inshow/([],()=>r(require("路径")))
+
+		路由模式
+			分为hash模式和history/'hɪst(ə)rɪ/模式
+				区别:
+			hash的原理是onhashchange事件,可以在window对象上监听这个事件;hash会自动保存前进和后退的功能
+			historty这是hash是的演化;更加自由的操作历史状态;包括前进后退刷新的方法;有时页面刷新会导致出现404
+
+		路由跳转的过程(生命周期):
+
+			旧的路由即将离开,会回调beforeRouterLeve钩子函数
+			全局导航触发,router.beforeEach(to,from,next)会被回调
+			触发了新路由,新路由中的beforeEneter钩子函数回调
+			新路由即将被激活,会回调beforeRouterEnter钩子函数,这是没有组件
+			异步解析组件
+			路由切换完成,切换完后会回调路由全局钩子函数router.afterEach			
+
+			路由切换过程中回调钩子(导航钩子)函数有3类
+			    全局导航钩子:由路由对象回调
+				router.beforeEach(to,from,next)
+					参数to:目标路由路径,from(源路径)next(一定要调用这个函数才能跳转到下一个路由)
+				router.afterEach(to,from)
+			    路由级导航钩子:
+				beforeEnter
+			    组件级的导航钩子
+				beforeRouterEnter
+				beforeRouterUpdate:路由发生变化,所在的组件被复用时
+				beforeRouterLeave:组件即将失活时回调
+
+		路由的传递参数和获取参数:
+			1:通过定义路由纪录设置name属性传递参数;
+				通过this.$route.name拿到对应的参数
+			2:通过router-link中to属性,设置参数path,name,query,params
+				可以通过this.$route获取对应的参数
+			3:通过js方式中router的原型方法this.$router.push,设置参数path,name,query,params
+				也是通过this.$route获取参数
+
+	9）Vuex：组件间通信
+
+		概念:将共享的数据存储在一个容器中,以某个方式修改数据以保证数据可预测
+
+		store创建:
+			用于集中存储共享数据的仓库
+				new Vue.Store({})
+		state:
+			用于存储共享数据
+		mutaions的作用:
+			专门用于修改状态的方法
+			所有mutations方法中只能同步操作,不能异步
+			mutations专门与state交互的,通过commit调用
+		actions的作用:
+			专门用于封装组件的复杂逻辑方法
+			actions专门和mutation交互的,通过dispatch调用
+
+	不用VueX会带来什么问题:
+		可维护性会下降;
+		增加耦合性
+	应用场景使用:
+		单页面应用中,组件之间的状态,音乐播放,登录状态,加入购物车
+
+使用Vue的优点
+	1:低耦合
+	2:可重用性
+	3:独立开发
+	4:可测试性
+	
+虚拟DOM的原理:
+	vdom是树状结构，其节点为vnode，vnode和浏览器DOM中的Node一一对应，通过vnode的elm属性可以访问到对应的Node。最终通过diff算法提高DOM的操作
+
+9.React
+	1)React 和 Vue区别
+	
+		1.视图模板:Vue的视图模板是根据template,而React的视图模板是根据JSX
+		2.组件化:React的视图模板和路由都是基于组件实现的,
+		3.指令:Vue提供了很多指令.React没有;偏向于JavaScript的编写
+		4.双向数据绑定不同:Vue可以直接把View和Model层数据实时监听更新;React需要通过一定的操作才可以
+		5.状态管理vs对象属性:React中state是一个管理数据的对象;不能直接改变而是通过setState()方法去更新状态;而在Vue中state是容器中的状态管理,通过mutation修改,也可以放在data进行管理
+	
+	2)React组件：三种定义
+		函数式组件：无状态组件
+		类组件：React.Component类组件
+				React.createClass类组件
+	
+	3）props：实现父子间通信
+	
+	4）state:状态
+		定义： constructor(){this.state={msg:''}}
+		获取： this.state.xxx
+		修改：this.setState({})	//异步修改
+	
+	5）组件生命周期
+		挂载阶段：构造函数--componentWillMount--render--componentDidMount
+		更新阶段：						componentWillUpdate--render--componentDidUpdate
+						shouldComponentUpdate-->↑
+		componentWillRecevieProps-->↑		
+	
+	6）路由
+		基本实现
+		嵌套路由
+		动态路由
+	
+	7）Redux:共享数据
+		1）reducers
+		2）store
+		3）定义action creator
+		
+10、浏览器的兼容问题
+		问题一:不同浏览器的标签默认的外边距和内边距不同
+			解决方法就是css样式初始化
+		问题二:块属性标签设置float后,又要横向的margin情况下;在ie6显示的margin会偏大
+			解决方法:在float的标签样式控制中加入display:inline;将其转化为行内属性
+		问题三:图片默认的间距
+			解决方法:使用float属性为img布局
+		问题四:HTML5标签<header><nav>等标签在IE8无法渲染
+			解决方法:使用html5shiv.js兼容IE6-8浏览器兼容HTML5语义化标签
+		问题五:CSS3响应式布局,IE8不支持
+			解决方法Respond.js可以帮助兼容IE6-8
+
+11、性能优化
+	减少HTTP请求：减少文件数量(压缩、打包、css精灵/雪碧图)
+				  缓存（浏览器缓存、本地存储）
+				  懒加载（预加载）
+	减少DOM操作：常利用解决事件委托
+	减少DOM节点数量
+	减少数组遍历...
+	css和JavaScript使用外部引入
+
+12.在浏览器上输入url地址之后到页面展示所经历过程
+		浏览器根据请求的URL交给DNS域名解析,找到真实IP,向服务器发起请求;服务器交给后台处理完后返回数据
+		浏览器接收文件(HTML,JS,CSS,图像等);浏览器对加载到的资源(HTML,JS,CSS等)进行语法解析,建立相应的
+		的内部数据结构(HTML和DOM);载入解析到的资源文件,渲染页面,完成
+
+13.seo优化
+	1）使用语义化标签
+	2）减少嵌套
+	3）外部js和外部样式
+	4）使用meta定义title和description
+	5) 重要内容不要使用js输出:爬虫不会执行js获取内容
+
+14.浏览器安全问题
+	1）xss:
+		指通过存在安全漏洞的web网站注册用户的浏览器内运行非法的HTML标签或者JavaScript进行的一种攻击
+
+	2）sql注入:代码注入的漏洞;如果没有过滤敏感字符;绑定变量,导致攻击者可以通过sql达到自己的目的
+		
+		
+	3）csrf（跨站伪造请求）:
+		指攻击者通过设置好的陷阱,强制对已完成的认证用户进行非预期的个人信息或者信息等某些状态更新
+
+ 15.web打包过程:
+
+	首先 minifest.js 会定义一个 webpackJsonp 方法，待其他打包后的文件（也可称为              	chunk）调用。当调用 chunk 时，会先将该 chunk 中所有的 moreModules， 也就是		每一个依赖的文件也可称为 module （如 test.js）存起来。之后通过executeModules 	判断这个文件是不是入口文件，决定是否执行第一次 __webpack_require__。而 	__webpack_require__ 的作用，就是根据这个 module 所require 的东西，不断递归调	用__webpack_require__，__webpack_require__函数返回值后供 require 使用。当然	，模块是不会重复加载的，因为installedModules 记录着 module 调用后的 exports 	的值，只要命中缓存，就返回对应的值而不会再次调用 module。webpack 打包后的	文件，就是通过一个个函数隔离 module 的作用域，以达到不互相污染的目的。
+
+ 16.如何自行测试的:
+	自己测试,就是五大浏览器,PC端的,app就是调试ip地址,用真机测
+	运营部署
+	1:单元测试	
+	2:集成测试
+	3:确定测试
+	4:系统测试
+	5:验收测试
+
+	
+17.自我介绍
+	你好;面试官,我叫陈姚丰,今年25岁,毕业于广东农工商职业学院;从2015年毕业出来就在兴元科技有限公司实习,一直到现在任职web前端开发;善用于vue和react主流框架配合着多个技术(jQuery;layui等插件)实现app和pc的网页开发;在这三年的工作时间,学习很多知识和技巧,但是在看到如今it行业发展的如此之快,我觉得我需要加快脚步跟上发展的速度,这是我现在需要面临的挑战;感谢咱们公司给我这次面试机会,也希望能够通过公司的平台展现自己的实力
+
+18.离职原因:
+	我之前的公司因为本来处于创业阶段,但是业务模式不断改变,导致现在公司项目越来越少,我的工作越来越清闲,这期间我坚持了下去,因为这家公司带我很多收获,也是我该报答的时候,坚持了半年吧,公司还是没有转型成功,后面我觉得我还年轻嘛,我也想在前端走的更远,经过思考后,我觉得换一份工作
+
+19.工资方面:
+	我的期望值是在10k到12k,但是由于我刚来咱们公司,还不太熟悉业务,还不能及时为公司作出贡献;但是我相信咱们公司肯定有一个薪资的考核标准
+
+20.前端项目开发流程:
+	拿到顾客的需求;
+	团队编写规范文档;
+		第一阶段:选择库或者框架来搭建项目
+		第二阶段:简单构建优化
+		第三阶段:js/css模块化开发
+		第四阶段:组件化开发与资源管理
+	和后台定义接口;
+	和UI设计讨论需要的设计稿;
+	根据编写的规范文档和接口数据和后台做联调;送测
+
+21:webpack的具体问题
+	install/insto/:下载安装需要的包
+	entry: /entri/用来写入口文件,它将是整个依赖关系的根
+	output: /outpot/即使入口文件有多个,但是只有一个输出配置
+	loader: /laode/loaders负责的是处理源文件的如css、jsx，一次处理一个文件
+	            loader是webpack最重要的部分之一;通过使用不同的loader,我们能够外部的脚本或者工具，
+                            实现对不同格式文件的处理，loader需要在webpack.config.js里边单独用module进行配置
+	plugins:/plaogensi/ plugins并不是直接操作单个文件，它直接对整个构建过程起作用
+	产品阶段的构建
+	优化插件
+
+22:项目介绍
+	这个项目是我们公司刚转型为金融公司的第一个项目,利用了vue框架来实现开发;中间利用到了Vue-router实现单页面的跳转;还有封装的组件重复性代码;利用动态路由来实现顾客的买入卖出;用jQuery的ajax来实现和后台的交互;主要的技术点是图表走势图;引用了echarts插件根据UI给出的图形和产品经理的需求用canvas来做改动实现整个k线走势图;也给这个项目做了国际化处理插件i18n等技术完成整个项目
+	
+23:4个前端4后端3产品经理2个UI2个测试
+	
+	

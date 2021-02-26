@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+
+        // 数据
+        let data = {
+            a:'111',
+            b:'2222',
+            arr:[111,222,333]
+        }
+
+    
+        class CopyMethods{
+            constructor(arr){
+                this.methods = ['push','pop','shift','unshift','reverse','sort'];
+                this.arr = arr;
+                this.arrayMethod = {};
+                this.arr.__proto__ = this.arrayMethod;
+                this.copymethods();
+            }
+            copymethods(){
+                this.methods.forEach((method)=>{
+                    this.arrayMethod[method] = (arg)=>{
+                        Array.prototype[method].call(this.arr,arg);
+                        this.arr.__ob__.dep.notify();
+                    }
+                })
+            }
+        }
+
+        function def(obj,name,value){
+            Object.defineProperty(obj,name,{
+                value,
+                enumerable:false
+            })
+        }
+
+        // 设置数据监听,收集依赖.
+        class Observers{
+            constructor(data){
+                this.dep = new Dep();
+                def(data,'__ob__',this);
+                if(Array.isArray(data)){
+                    new CopyMethods(data);
+                }else{
+                    this.walk(data);
+                }                
+            }
+            walk(data){
+                let keys = Object.keys(data);
+                for(let i=0;i<keys.length;i++){
+                    this.observeReactive(data,keys[i],data[keys[i]])
+                }
+            }
+            observe(key){
+                let ob = null;
+                if(typeof data[key] == 'object' && data[key] !== null){
+                    ob = new Observers(data[key]);
+                }
+                return ob
+            }
+            observeReactive(obj,key,val){
+
+                let childOb = this.observe(key);
+
+                let dep = new Dep();
+
+                Object.defineProperty(obj,key,{
+                    get(){
+                        console.log('getArr');
+                        if(Array.isArray(val)){
+                            childOb.dep.depend();
+                        }else{
+                            dep.depend();
+                        }                       
+                        return val
+                    },
+                    set(newVal){
+                        val = newVal;
+                        dep.notify();
+                    }
+                })
+            }
+        }
+        
+        class Dep{
+            constructor(){
+                this.dep = [];
+            }
+            notify(){
+                this.dep.forEach(function(item){
+                    item();
+                })
+            }
+            depend(){
+                this.dep.push(Dep.target.callback);
+            }
+        }
+        
+        class Watcher{
+            constructor(name,callback){
+                this.name = name;
+                this.callback = callback;
+                Dep.target = this;
+                data[this.name];
+            }
+        }
+
+        new Observers(data);
+
+        // 订阅者.
+        new Watcher('arr',function(){
+            console.log('arr更新了哈哈哈')
+        })
+
+
+
+    </script>
+
+</body>
+</html>
