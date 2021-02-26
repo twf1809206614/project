@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+
+        // 数据
+        let data = {
+            a:'111',
+            b:'2222',
+            c:{d:'33333'}
+        }
+
+        // 设置数据监听,收集依赖.
+        function Observers(data){
+            observe(data);
+        }
+
+        function observe(obj){
+            for(let key in obj){
+                if(typeof obj[key] === 'object'){
+                    observe(obj[key]);
+                }                   
+                observedeactive(obj,key);                             
+            }
+        }
+
+        function observedeactive(obj,key){
+            let val = obj[key];
+            let dep = [];
+            Object.defineProperty(obj,key,{
+                get(){
+                    depend(dep);
+                    return val
+                },
+                set(newVal){
+                    val = newVal;
+                    console.log(key+'变化了');
+                    notify(dep);
+                }
+            })
+        }
+
+        function depend(dep){
+            dep.push(window.watcher.callback);
+        }
+
+        function notify(dep){
+            dep.forEach(function(item){
+                item();
+            })
+        }
+
+        new Observers(data);
+        
+        function Watcher(name,callback){
+            this.name = name;
+            this.callback = callback;
+            window.watcher = this;
+            data[name];           
+        }
+
+        // 订阅者.
+        new Watcher('a',function(){
+            console.log('a更新了哈哈哈')
+        })
+
+        new Watcher('a',function(){
+            console.log('a更新了呵呵呵呵')
+        })
+
+        new Watcher('b',function(){
+            console.log('我家b也更新了')
+        })
+
+    </script>
+
+</body>
+</html>

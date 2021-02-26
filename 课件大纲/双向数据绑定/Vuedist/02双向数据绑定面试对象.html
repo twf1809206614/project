@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+
+        // 数据
+        let data = {
+            a:'111',
+            b:'2222',
+            c:{d:'33333'}
+        }
+
+        // 设置数据监听,收集依赖.
+        class Observers{
+            constructor(data){
+                this.walk(data);
+            }
+            walk(data){
+                for(let key in data){
+                    this.observeReactive(data,key)
+                }
+            }
+            observe(key){
+                if(Object.prototype.toString.call(data[key])==='[object Object]'){
+                    new Observers(data[key]);
+                }
+            }
+            observeReactive(obj,key){
+
+                this.observe(key);
+
+                let val = obj[key];
+                let dep = new Dep();
+                Object.defineProperty(obj,key,{
+                    get(){
+                        console.log(key);
+                        dep.depend();
+                        return val
+                    },
+                    set(newVal){
+                        val = newVal;
+                        dep.notify();
+                    }
+                })
+            }
+        }
+        
+        class Dep{
+            constructor(){
+                this.dep = [];
+            }
+            notify(){
+                this.dep.forEach(function(item){
+                    item();
+                })
+            }
+            depend(){
+                this.dep.push(Dep.target.callback);
+            }
+        }
+        
+        class Watcher{
+            constructor(name,callback){
+                this.name = name;
+                this.callback = callback;
+                Dep.target = this;
+                data[this.name];
+            }
+        }
+
+        new Observers(data);
+
+        // 订阅者.
+        new Watcher('a',function(){
+            console.log('a更新了哈哈哈')
+        })
+
+        new Watcher('a',function(){
+            console.log('a更新了呵呵呵呵')
+        })
+
+        new Watcher('b',function(){
+            console.log('我家b也更新了')
+        })
+
+        new Watcher('c',function(){
+            console.log('我家cccc也更新了')
+        })
+
+    </script>
+
+</body>
+</html>

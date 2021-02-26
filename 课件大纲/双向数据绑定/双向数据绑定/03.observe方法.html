@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id='app'>
+        <span>{{msg}}</span>
+        <p>{{msg}}</p>
+        <h3>{{msg}}</h3>
+    </div>
+    <script>
+
+        let data = {
+            msg:111,
+            str:222
+        }
+
+        function Observer(data){
+            // 每一个Observer实例对应一个Vue数据
+            this.data = data;
+            // 给data数据添加监听
+            this.observe();
+        }
+
+        // 遍历所有的data字段,用于设置数据监听.
+        Observer.prototype.observe = function(){
+            Object.entries(this.data).forEach(([key,value])=>{
+                this.walk(key,value);
+            })
+        }
+
+        // 给某个字段设置数据监听.
+        Observer.prototype.walk = function(key,value){
+            // 监听data的msg字段.
+            Object.defineProperty(this.data,key,{
+                get(){
+                    return value
+                },
+                // setter监听数据变化
+                set(newVal){              
+                    value = newVal;
+                    // 数据变化后更新视图.
+                    document.getElementsByTagName('span')[0].innerText = newVal;
+                    document.getElementsByTagName('p')[0].innerText = newVal;
+                    document.getElementsByTagName('h3')[0].innerText = newVal;
+                }   
+            })
+        }
+
+        new Observer(data);
+
+    </script>
+</body>
+</html>

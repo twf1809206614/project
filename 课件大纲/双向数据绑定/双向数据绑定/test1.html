@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <span>span</span>
+        <p>p</p>
+        <h3>h3</h3>
+    </div>
+
+    <script>
+        let data = {
+            msg:1111,
+            text:2332
+        }
+
+        function Observer(data){
+            this.data = data;
+            this.walk();
+        }
+
+        Observer.prototype.walk = function(){
+            Object.entries(this.data).forEach(([key,value])=>{
+                this.defineReactive$$1(key,value);
+            })
+        }
+
+        Observer.prototype.defineReactive$$1 = function(key,value){
+            let dep = new Dep();
+            Object.defineProperty(this.data,key,{
+                get(){
+                    dep.depend();
+                    return value
+                },
+                set(newVal){
+                    value = newVal;
+                    dep.notify(newVal);
+                }
+            })
+        }
+
+        new Observer(data);
+
+        function Dep(){
+            this.sub = [];
+        }
+
+        Dep.prototype.depend = function(){
+            this.sub.push(target);
+        }
+
+        Dep.prototype.notify = function(newVal){
+            this.sub.forEach(watcher => {watcher.fn(newVal)});
+        }
+
+        let target = null;
+
+        function Watcher(exp,fn){
+            this.exp = exp;
+            this.fn = fn;
+            target = this;
+            data[exp];
+        }
+
+        new Watcher("msg",setSpan);
+        new Watcher("msg",setH3);
+        new Watcher("text",setP);
+        new Watcher("text",setH3);
+
+        function setSpan(newVal){
+            document.getElementsByTagName("span")[0].innerText = newVal;
+        }
+
+        function setP(newVal){
+            document.getElementsByTagName("P")[0].innerText = newVal;
+        }
+
+        function setH3(newVal){
+            document.getElementsByTagName("H3")[0].innerText = newVal;
+        }
+
+    </script>
+</body>
+</html>

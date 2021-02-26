@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+
+        // Vue是在何时生成Watcher实例的？
+        // Vue在编译模板的时候生成对应的Watcher.
+        // 并且把对应的watcher实例放到了对应数据的dep数组内
+
+        // 在编译模板时,会访问对应的数据,访问对应的数据,数据的getter就触发,这时候就已经完成了依赖的收集.
+
+        template:`
+            <div>
+                <p>{{msg}}</p>
+                <span>{{msg}}</span>
+                <span>{{fn()}}</span>
+            </div>
+        `
+
+        // 编译p标签是,相当于实例化了这样一个watcher new Watcher('msg',App)
+
+    </script>
+
+</body>
+</html>

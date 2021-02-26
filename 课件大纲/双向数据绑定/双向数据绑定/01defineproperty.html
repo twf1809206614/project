@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id='app'>
+        <span>{{msg}}</span>
+        <p>{{msg}}</p>
+        <h3>{{msg}}</h3>
+    </div>
+    <script>
+
+        let data = {
+            msg:'111'
+        }
+
+        let val = data.msg;
+
+        Object.defineProperty(data,'msg',{
+            get(){
+                return val
+            },
+            // setter监听数据变化
+            set(newVal){              
+                val = newVal;
+                // 数据变化后更新视图.
+                document.getElementsByTagName('span')[0].innerText = newVal;
+                document.getElementsByTagName('p')[0].innerText = newVal;
+                document.getElementsByTagName('h3')[0].innerText = newVal;
+            }   
+        })
+
+    </script>
+</body>
+</html>

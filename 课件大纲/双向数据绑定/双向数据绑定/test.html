@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <span>span</span>
+        <p>p</p>
+        <h3>h3</h3>
+    </div>
+
+    <script>
+        let data = {
+            msg:111,
+            str:222
+        }
+
+        //发布者,监听了两个数据，发布了两个数据
+        function Observer(data){
+            //每一个Observer实例对应一个Vue数据
+            this.data = data;
+            //给data数据添加监听
+            this.walk();
+        }
+
+        //遍历所有的data字段，用于设置数据监听
+        Observer.prototype.walk = function(){
+            Object.entries(this.data).forEach(([key,value])=>{
+                this.defineReactive$$1(key,value);
+            })
+        }
+
+        //给某个字段设置数据监听
+        Observer.prototype.defineReactive$$1 = function(key,value){
+            //一个dep对应一个数据
+            let dep = new Dep();
+            //监听data的字段
+            Object.defineProperty(this.data,key,{
+                //数据被访问时触发get
+                get(){
+                    //收集依赖(往数组里添加满足条件的元素)
+                    dep.depend();
+                    return value
+                },
+                //setter监听数据变化，数据被修改时触发set
+                set(newVal){
+                    value = newVal;
+                    //数据变化后通知所有的视图更新，更新视图的个数取决于dep数组元素的个数   
+                    dep.notify(newVal)
+                }
+            })
+        }
+        //给data的所有字段设置数据监听
+        new Observer(data);
+
+        //Dep 类
+        function Dep(){
+            this.sub = []
+        }
+
+        //往dep实例内添加Watcher实例
+        Dep.prototype.depend = function(){
+            this.sub.push(target)
+        }
+
+        //往dep实例内的所有Watcher实例进行视图更新
+        Dep.prototype.notify = function(newVal){
+            this.sub.forEach(watcher => watcher.fn(newVal))
+        }
+
+        //全局的watcher的中间变量
+        let target = null
+
+        //订阅者类 =>某个数据变化通知某些视图更新
+        function Watcher(exp,fn){
+            //订阅的数据名
+            this.exp = exp;
+            //订阅的数据变化时通知对应的视图更新
+            this.fn = fn;
+            //把当前的watcher实例存储到中间变量target中，方便在getter中获取
+            target = this;
+            //访问对应的数据，实例化时exp是什么数据，在这里就会访问对应的数据
+            //对应的数据的getter就会触发，则dep数据就会push对应的watcher实例进去
+            data[exp]
+        }
+
+        new Watcher("msg",setSpan);
+        new Watcher("msg",setH3);
+        new Watcher("str",setH3);
+        new Watcher("str",setP);
+
+        function setSpan(newVal){
+            document.getElementsByTagName("span")[0].innerText = newVal;  
+        }
+
+        function setP(newVal){
+            document.getElementsByTagName("p")[0].innerText = newVal;  
+        }
+
+        function setH3(newVal){
+            document.getElementsByTagName("h3")[0].innerText = newVal;
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.20.0/axios.js"></script>
+    <script>
+
+        let arr = [{data:0},{data:1}];
+        let params = [
+            {path:'search',key:'keywords',value:'热门'},
+            {path:'comment/hot?type=0',key:'id',value:32192436},
+        ];
+
+        // arr.forEach((item,i)=>{
+        //     console.log(9090);
+        //     axios.get('https://apimusic.linweiqin.com/'+params[i].path,{
+        //         params:{[params[i].key]:params[i].value}
+        //     }).then((res)=>{
+        //         console.log(i);
+        //         console.log(res);
+        //         arr[i].data = res.data;
+        //     })
+        // })
+
+        async function getData(){
+            // for(var i=0;i<arr.length;i++){
+            //     await axios.get('https://apimusic.linweiqin.com/'+params[i].path,{
+            //         params:{[params[i].key]:params[i].value}
+            //     }).then((res)=>{
+            //         console.log(i);
+            //         console.log(res);
+            //         arr[i].data = res.data;
+            //     })
+            // }
+            arr.forEach((item,i)=>{
+                await axios.get('https://apimusic.linweiqin.com/'+params[i].path,{
+                    params:{[params[i].key]:params[i].value}
+                }).then((res)=>{
+                    console.log(i);
+                    console.log(res);
+                    arr[i].data = res.data;
+                })
+            })
+        }
+
+        // async和await需要处在同一个函数作用域内。
+        // 所有的await需要在同一个async内才可以实现同步的效果
+
+        getData();
+        
+
+
+    </script>
+
+</body>
+</html>
